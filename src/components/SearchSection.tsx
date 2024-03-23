@@ -39,7 +39,7 @@ const SearchSection: FC<Props> = ({
       <Typography variant="body1">
         Search for a customer by name, status, area, or shift.
       </Typography>
-      <Stack direction={'row'} gap={1} flexWrap={'wrap'}>
+      <Stack direction={'row'} gap={1}>
         <TextField
           size="small"
           label="Customer name"

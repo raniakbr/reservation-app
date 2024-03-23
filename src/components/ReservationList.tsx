@@ -1,6 +1,5 @@
 import {
   Chip,
-  ChipProps,
   Stack,
   Table,
   TableBody,
@@ -14,18 +13,13 @@ import {
 import React, { FC } from 'react';
 import { Reservation, ReservationStatus } from 'src/types/reservations';
 
+import { OrderByType } from 'src/hooks/useFilterReservations';
 import { getFormattedTime } from 'src/utils/getFormattedTime';
 
 type Props = {
   reservations: Reservation[];
-  orderBy: {
-    column:
-      | keyof Reservation
-      | `${'customer'}.${keyof Reservation['customer']}`
-      | null;
-    direction: 'asc' | 'desc';
-  };
-  handleOrderBy: any;
+  orderBy: OrderByType;
+  handleOrderBy: (column: OrderByType['column']) => void;
 };
 
 const ReservationList: FC<Props> = ({
@@ -33,12 +27,27 @@ const ReservationList: FC<Props> = ({
   orderBy,
   handleOrderBy,
 }) => {
-  const colorMapper: { [key in ReservationStatus]: ChipProps['color'] } = {
+  const colorMapper: {
+    [key in ReservationStatus]: 'default' | 'info' | 'success' | 'warning';
+  } = {
     [ReservationStatus.checkedOut]: 'warning',
     [ReservationStatus.confirmed]: 'success',
     [ReservationStatus.seated]: 'info',
     [ReservationStatus.notConfirmed]: 'default',
   };
+
+  const renderTableSortLabel = (
+    column: OrderByType['column'],
+    label: string,
+  ) => (
+    <TableSortLabel
+      active={orderBy.column === column}
+      direction={orderBy.column === column ? orderBy.direction : 'asc'}
+      onClick={() => handleOrderBy(column)}>
+      {label}
+    </TableSortLabel>
+  );
+
   return (
     <Stack gap={2}>
       <Typography variant="h5">Search Result</Typography>
@@ -50,43 +59,16 @@ const ReservationList: FC<Props> = ({
         <Table>
           <TableHead sx={{ background: '#eee' }}>
             <TableRow>
-              {' '}
               <TableCell>ID</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>
-                {' '}
-                <TableSortLabel
-                  active={orderBy.column === 'customer.firstName'}
-                  direction={
-                    orderBy.column === 'customer.firstName'
-                      ? orderBy.direction
-                      : 'asc'
-                  }
-                  onClick={() => handleOrderBy('customer.firstName')}>
-                  First name
-                </TableSortLabel>
+                {renderTableSortLabel('customer.firstName', 'First name')}
               </TableCell>
               <TableCell>
-                <TableSortLabel
-                  active={orderBy.column === 'customer.lastName'}
-                  direction={
-                    orderBy.column === 'customer.lastName'
-                      ? orderBy.direction
-                      : 'asc'
-                  }
-                  onClick={() => handleOrderBy('customer.lastName')}>
-                  Last name
-                </TableSortLabel>
+                {renderTableSortLabel('customer.lastName', 'Last name')}
               </TableCell>
               <TableCell>
-                <TableSortLabel
-                  active={orderBy.column === 'quantity'}
-                  direction={
-                    orderBy.column === 'quantity' ? orderBy.direction : 'asc'
-                  }
-                  onClick={() => handleOrderBy('quantity')}>
-                  Quantity
-                </TableSortLabel>
+                {renderTableSortLabel('quantity', 'Quantity')}
               </TableCell>
               <TableCell>Shift</TableCell>
               <TableCell>Date</TableCell>
@@ -110,9 +92,7 @@ const ReservationList: FC<Props> = ({
               }) => (
                 <TableRow key={id} hover>
                   <TableCell>{id}</TableCell>
-
                   <TableCell>
-                    {' '}
                     <Chip
                       label={status}
                       size="small"
