@@ -11,6 +11,14 @@ export type OrderByType = {
   direction: 'asc' | 'desc';
 };
 
+export type SearchCriteriaType = {
+  customerName: string;
+  status: string;
+  shift: string;
+  area: string;
+  date: string;
+};
+
 export const useFilterReservations = (reservations: Reservation[]) => {
   const initialSearch = {
     customerName: '',

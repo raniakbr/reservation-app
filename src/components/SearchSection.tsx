@@ -16,11 +16,13 @@ import {
   statusSelectData,
 } from 'src/data/selectOptions';
 
+import { SearchCriteriaType } from 'src/hooks/useFilterReservations';
+
 type Props = {
-  searchCriteria: any;
-  setSearchCriteria: any;
-  filterReservations: any;
-  clearSearch: any;
+  searchCriteria: SearchCriteriaType;
+  setSearchCriteria: React.Dispatch<React.SetStateAction<SearchCriteriaType>>;
+  filterReservations: () => void;
+  clearSearch: () => void;
 };
 
 const SearchSection: FC<Props> = ({
@@ -39,7 +41,7 @@ const SearchSection: FC<Props> = ({
       <Typography variant="body1">
         Search for a customer by name, status, area, or shift.
       </Typography>
-      <Stack direction={'row'} gap={1}>
+      <Stack direction={{ xs: 'column', md: 'row' }} gap={1}>
         <TextField
           size="small"
           label="Customer name"
